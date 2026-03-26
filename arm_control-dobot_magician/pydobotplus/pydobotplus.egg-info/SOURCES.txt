@@ -1,0 +1,12 @@
+LICENSE.txt
+README.md
+setup.cfg
+setup.py
+pydobotplus/__init__.py
+pydobotplus/dobotplus.py
+pydobotplus/message.py
+pydobotplus.egg-info/PKG-INFO
+pydobotplus.egg-info/SOURCES.txt
+pydobotplus.egg-info/dependency_links.txt
+pydobotplus.egg-info/requires.txt
+pydobotplus.egg-info/top_level.txt

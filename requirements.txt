@@ -1,0 +1,9 @@
+Jinja2==3.1.5
+pyserial==3.5
+PyYAML==6.0.2
+typeguard==4.4.2
+numpy==2.2.3
+scipy
+Pygments
+decorator
+pexpect

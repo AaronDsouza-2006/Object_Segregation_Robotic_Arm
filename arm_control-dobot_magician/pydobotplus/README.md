@@ -1,0 +1,117 @@
+# pydobotplus
+
+An extended Python library for controlling the Dobot Magician.
+
+## Installation
+
+Install the driver from [Silicon Labs](https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers).
+
+Run:
+```sh
+pip install pydobotplus
+```
+
+## Example
+
+```python
+from serial.tools import list_ports
+from pydobotplus import Dobot, CustomPosition
+
+available_ports = list_ports.comports()
+print(f'available ports: {[x.device for x in available_ports]}')
+port = available_ports[2].device
+
+device = Dobot(port=port)
+
+# Create a custom position
+pos1 = CustomPosition(x=200, y=50, z=50)
+
+# Move using direct coordinates
+device.move_to(x=200, y=50, z=50)
+
+# Move using custom position
+device.move_to(position=pos1)
+
+# Control the conveyor belt
+device.conveyor_belt(speed=0.5, direction=1)
+device.conveyor_belt_distance(speed_mm_per_sec=50, distance_mm=200, direction=1)
+
+device.close()
+```
+
+## Methods
+
+* **Dobot(port, verbose=False)** Creates an instance of Dobot connected to the given serial port.
+    * **port**: _string_ with name of serial port to connect
+    * **verbose**: _bool_ will print to console all serial communications
+
+* **.get_pose()** Returns the current pose of the Dobot, as a `Pose` named tuple (position and joints).
+    * **position**: _Position_ with (x, y, z, r) coordinates
+    * **joints**: _Joints_ with (j1, j2, j3, j4) angles
+
+* **.move_to(x=None, y=None, z=None, r=0, wait=True, mode=None, position=None)** Queues a translation for the Dobot to the given coordinates or a `Position` object, keeps any unspecified parameters the same.
+    * **x**: _float_ x cartesian coordinate to move
+    * **y**: _float_ y cartesian coordinate to move
+    * **z**: _float_ z cartesian coordinate to move
+    * **r**: _float_ r effector rotation
+    * **wait**: _bool_ waits until the command has been executed before returning to the process - DO NOT TOUCH UNLESS YOU KNOW WHAT YOU ARE DOING
+    * **mode**: _MODE_PTP_ movement mode (default is `MODE_PTP.MOVJ_XYZ`) - DO NOT TOUCH UNLESS YOU KNOW WHAT YOU ARE DOING
+    * **position**: _Position_ object with (x, y, z, r) coordinates
+
+* **.move_rel(x=0, y=0, z=0, r=0, wait=True)** Moves the Dobot relative to its current position, keeps any unspecified parameters the same.
+    * **x**: _float_ relative x coordinate
+    * **y**: _float_ relative y coordinate
+    * **z**: _float_ relative z coordinate
+    * **r**: _float_ relative r rotation
+    * **wait**: _bool_ waits until the command has been executed before returning to the process
+
+* **.speed(velocity, acceleration)** Changes the velocity and acceleration at which the Dobot moves to future coordinates.
+    * **velocity**: _float_ desired translation velocity
+    * **acceleration**: _float_ desired translation acceleration
+
+* **.suck(enable)** Enables or disables suction.
+    * **enable**: _bool_ enables/disables suction
+
+* **.grip(enable)** Enables or disables the gripper.
+    * **enable**: _bool_ enables/disables gripper
+
+* **.get_alarms()** Returns a set of current alarms.
+    * **returns**: _set_ of `Alarm` enums
+
+* **.clear_alarms()** Clears all current alarms.
+
+* **CustomPosition(x=None, y=None, z=None, r=None)** Initializes a custom position object.
+    * **x**: _float_ x coordinate
+    * **y**: _float_ y coordinate
+    * **z**: _float_ z coordinate
+    * **r**: _float_ effector rotation - NOT USED ON MAGICIAN
+
+* **MODE_PTP** Enum class for various PTP modes such as `JUMP_XYZ`, `MOVJ_XYZ`, `MOVL_XYZ`, etc. - DO NOT TOUCH UNLESS YOU KNOW WHAT YOU ARE DOING
+
+* **DobotException** Custom exception class for handling Dobot-related errors.
+
+* **.set_color_sensor(enable=True, version=1)** Enables or disables the color sensor.
+    * **enable**: _bool_ enables/disables the sensor
+    * **version**: _int_ sensor version
+
+* **.get_color()** Returns the RGB values detected by the color sensor.
+    * **returns**: _list_ with RGB values
+
+* **.set_ir(enable=True, port=PORT_GP4)** Enables or disables the IR sensor on the specified port.
+    * **enable**: _bool_ enables/disables the sensor
+    * **port**: _int_ port number
+
+* **.get_ir(port=PORT_GP4)** Returns the state of the IR sensor on the specified port.
+    * **port**: _int_ port number
+    * **returns**: _bool_ state of the sensor
+
+* **.conveyor_belt(speed, direction=1, interface=0)** Sets the speed and direction of the conveyor belt.
+    * **speed**: _float_ speed of the conveyor belt (range: 0.0 to 1.0)
+    * **direction**: _int_ direction of the conveyor belt (1 for forward, -1 for backward)
+    * **interface**: _int_ motor interface (default is 0)
+
+* **.conveyor_belt_distance(speed_mm_per_sec, distance_mm, direction=1, interface=0)** Moves the conveyor belt at a specified speed for a specified distance.
+    * **speed_mm_per_sec**: _float_ speed in millimeters per second (must be <= 100)
+    * **distance_mm**: _float_ distance in millimeters
+    * **direction**: _int_ direction of the conveyor belt (1 for forward, -1 for backward)
+    * **interface**: _int_ motor interface (default is 0)
