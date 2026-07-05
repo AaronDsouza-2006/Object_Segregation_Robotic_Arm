@@ -5,6 +5,7 @@ Segregating Nuts, Bolts, and Screws using a Dobot Magician Robot Arm, yolo, and 
 ## Installation
 - Clone the repository
 - Install the python packages using the requirements.txt file
+- All important programs are in arm_control-dobot_magician
 
 ## Calibration
 - Run the calibration/calibration_simplified.py program to find the transformation matrix from Camera to Base
